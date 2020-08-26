@@ -45,15 +45,16 @@ MainWindow::MainWindow(QWidget *parent)
 //    QToolBar *toolBar = addToolBar("ToolBar");
 //    toolBar->addAction("pNew""");
 
-    QToolBar *toolBar = new QToolBar(this);
-    addToolBar(toolBar);
-    QAction *beginAction = new QAction(tr("&BEGIN"),this);
-    QAction *pauseAction = new QAction(tr("&PAUSE"),this);
-    QAction *continueAction = new QAction(tr("&CONTINUE"),this);
-    QAction *restartAction = new QAction(tr("&RESTART"),this);
-    QAction *quitAction = new QAction(tr("&QUIT"),this);
-    QAction *saveAction = new QAction(tr("&SAVE"),this);
-    QAction *loadAction = new QAction(tr("&LAOD"),this);
+
+    toolBar = new QToolBar(this);
+    addToolBar(Qt::BottomToolBarArea,toolBar);
+    beginAction = new QAction(tr("&BEGIN"),this);
+    pauseAction = new QAction(tr("&PAUSE"),this);
+    continueAction = new QAction(tr("&CONTINUE"),this);
+    restartAction = new QAction(tr("&RESTART"),this);
+    quitAction = new QAction(tr("&QUIT"),this);
+    saveAction = new QAction(tr("&SAVE"),this);
+    loadAction = new QAction(tr("&LAOD"),this);
     beginAction->setIcon(QIcon("./start.png"));
     pauseAction->setIcon(QIcon("./pause.png"));
     continueAction->setIcon(QIcon("./continue.png"));
@@ -71,6 +72,8 @@ MainWindow::MainWindow(QWidget *parent)
     toolBar->addAction(saveAction);
     toolBar->addAction(loadAction);
 
+
+
     connect(beginAction,SIGNAL(triggered()),this,SLOT(on_actionBEGIN_triggered()));
     connect(pauseAction,SIGNAL(triggered()),this,SLOT(on_actionPAUSE_triggered()));
     connect(continueAction,SIGNAL(triggered()),this,SLOT(on_actionCONTINUE_triggered()));
@@ -79,12 +82,171 @@ MainWindow::MainWindow(QWidget *parent)
     connect(saveAction,SIGNAL(triggered()),this,SLOT(on_actionSAVE_triggered()));
     connect(loadAction,SIGNAL(triggered()),this,SLOT(on_actionLOAD_triggered()));
 
-
+set_state("not_begin");
 
     timer = new QTimer;
 
    connect(timer, SIGNAL(timeout()),this,SLOT(timeOut()));
 
+}
+
+void MainWindow::set_state(QString str){
+    if(str=="not_begin"){
+        state=not_begin;
+        dir=Up;
+        steps=-1;
+        points=0;
+        t_last=0;
+        t_now=0;
+        to_grow=0;
+        speed=500;
+        need_move=0;
+        gameOver = true;
+        gameStart = false;
+        ui->actionPAUSE->setEnabled(false);
+        ui->actionCONTINUE->setEnabled(false);
+        ui->actionRESTART_2->setEnabled(false);
+        ui->actionSAVE->setEnabled(false);
+        ui->actionBEGIN->setEnabled(true);
+        ui->actionQUIT_2->setEnabled(true);
+        ui->actionLOAD->setEnabled(true);
+
+        pauseAction->setEnabled(false);
+        continueAction->setEnabled(false);
+        restartAction->setEnabled(false);
+        saveAction->setEnabled(false);
+        beginAction->setEnabled(true);
+        quitAction->setEnabled(true);
+        loadAction->setEnabled(true);
+
+        //1 begin
+        //2 continue
+        //3 quit
+        //4 restart
+        //5 pause
+        //6 load
+        //7 save
+        ui->pushButton_2->setEnabled(false);
+        ui->pushButton_4->setEnabled(false);
+        ui->pushButton_5->setEnabled(false);
+        ui->pushButton_7->setEnabled(false);
+        ui->pushButton->setEnabled(true);
+        ui->pushButton_3->setEnabled(true);
+        ui->pushButton_6->setEnabled(true);
+
+
+    }
+
+    if(str=="running"){
+
+        ui->actionCONTINUE->setEnabled(false);
+        ui->actionRESTART_2->setEnabled(false);
+        ui->actionSAVE->setEnabled(false);
+        ui->actionBEGIN->setEnabled(false);
+        ui->actionLOAD->setEnabled(false);
+        ui->actionQUIT_2->setEnabled(true);
+        ui->actionPAUSE->setEnabled(true);
+
+
+        continueAction->setEnabled(false);
+        restartAction->setEnabled(false);
+        saveAction->setEnabled(false);
+        beginAction->setEnabled(false);
+        loadAction->setEnabled(false);
+        pauseAction->setEnabled(true);
+        quitAction->setEnabled(true);
+
+        //1 begin
+        //2 continue
+        //3 quit
+        //4 restart
+        //5 pause
+        //6 load
+        //7 save
+        ui->pushButton_2->setEnabled(false);
+        ui->pushButton_4->setEnabled(false);
+        ui->pushButton_7->setEnabled(false);
+        ui->pushButton->setEnabled(false);
+        ui->pushButton_6->setEnabled(false);
+        ui->pushButton_3->setEnabled(true);
+        ui->pushButton_5->setEnabled(true);
+    }
+    if(str=="pause"){
+
+
+
+        ui->actionPAUSE->setEnabled(false);
+        ui->actionBEGIN->setEnabled(false);
+        ui->actionLOAD->setEnabled(false);
+        ui->actionSAVE->setEnabled(true);
+        ui->actionRESTART_2->setEnabled(true);
+        ui->actionQUIT_2->setEnabled(true);
+        ui->actionCONTINUE->setEnabled(true);
+
+
+        pauseAction->setEnabled(false);
+        beginAction->setEnabled(false);
+        loadAction->setEnabled(false);
+        continueAction->setEnabled(true);
+        restartAction->setEnabled(true);
+        saveAction->setEnabled(true);
+        quitAction->setEnabled(true);
+
+        //1 begin
+        //2 continue
+        //3 quit
+        //4 restart
+        //5 pause
+        //6 load
+        //7 save
+        ui->pushButton_5->setEnabled(false);
+        ui->pushButton_7->setEnabled(true);
+        ui->pushButton_6->setEnabled(false);
+        ui->pushButton_2->setEnabled(true);
+        ui->pushButton_4->setEnabled(true);
+        ui->pushButton->setEnabled(false);
+        ui->pushButton_3->setEnabled(true);
+
+    }
+    if(str=="end"){
+
+
+
+        ui->actionPAUSE->setEnabled(false);
+        ui->actionBEGIN->setEnabled(false);
+        ui->actionLOAD->setEnabled(false);
+        ui->actionSAVE->setEnabled(false);
+        ui->actionRESTART_2->setEnabled(true);
+        ui->actionQUIT_2->setEnabled(true);
+        ui->actionCONTINUE->setEnabled(false);
+
+
+        pauseAction->setEnabled(false);
+        beginAction->setEnabled(false);
+        loadAction->setEnabled(false);
+        continueAction->setEnabled(false);
+        restartAction->setEnabled(true);
+        saveAction->setEnabled(false);
+        quitAction->setEnabled(true);
+
+        //1 begin
+        //2 continue
+        //3 quit
+        //4 restart
+        //5 pause
+        //6 load
+        //7 save
+        ui->pushButton_5->setEnabled(false);
+        ui->pushButton_7->setEnabled(false);
+        ui->pushButton_6->setEnabled(false);
+        ui->pushButton_2->setEnabled(false);
+        ui->pushButton_4->setEnabled(true);
+        ui->pushButton->setEnabled(false);
+        ui->pushButton_3->setEnabled(true);
+        QMessageBox::information(this, QString::fromLocal8Bit("GG"),QString::fromLocal8Bit("STRIKE!!!"));
+
+
+    }
 }
 
 void MainWindow::setreward()
@@ -269,7 +431,7 @@ void MainWindow::addTopRectF()
 
     if(snake.at(0).y()-snakeNodeHeight < 50){
         gameStart=false;state=pause;;
-         QMessageBox::information(this, QString::fromLocal8Bit("GG"),QString::fromLocal8Bit("STRIKE!!!"));
+        set_state("end");
 
     }else{
         snake.insert(0,QRectF(snake.at(0).topLeft()+QPointF(0,-snakeNodeHeight),snake.at(0).topRight()));
@@ -277,9 +439,8 @@ void MainWindow::addTopRectF()
 
     if(snakeStrike()){
         gameStart=false;state=pause;;
-         QMessageBox::information(this, QString::fromLocal8Bit("GG"),QString::fromLocal8Bit("STRIKE!!!"));
+        set_state("end");
     }
-//    qDebug()<<"snake"<<snake.at(0);
 }
 
 void MainWindow::addDownRectF()
@@ -287,13 +448,13 @@ void MainWindow::addDownRectF()
     steps++;
     if(snake.at(0).y()+snakeNodeHeight*2 > 850){
         gameStart=false;state=pause;
-        QMessageBox::information(this, QString::fromLocal8Bit("GG"),QString::fromLocal8Bit("STRIKE!!!"));
+        set_state("end");
     }else{
         snake.insert(0,QRectF(snake.at(0).bottomLeft(),snake.at(0).bottomRight()+QPointF(0,snakeNodeHeight)));
     }
     if(snakeStrike()){
         gameStart=false;state=pause;;
-         QMessageBox::information(this, QString::fromLocal8Bit("GG"),QString::fromLocal8Bit("STRIKE!!!"));
+         set_state("end");
     }
 }
 //向左移动
@@ -302,13 +463,13 @@ void MainWindow::addLeftRectF()
     steps++;
     if(snake.at(0).x()-snakeNodeWidth < 50){
         gameStart=false;state=pause;
-                QMessageBox::information(this, QString::fromLocal8Bit("GG"),QString::fromLocal8Bit("STRIKE!!!"));
+        set_state("end");
     }else{
         snake.insert(0,QRectF(snake.at(0).topLeft()+QPointF(-snakeNodeWidth,0),snake.at(0).bottomLeft()));
     }
     if(snakeStrike()){
         gameStart=false;state=pause;;
-         QMessageBox::information(this, QString::fromLocal8Bit("GG"),QString::fromLocal8Bit("STRIKE!!!"));
+        set_state("end");
     }
 }
 //向右移动
@@ -317,13 +478,13 @@ void MainWindow::addRightRectF()
     steps++;
     if(snake.at(0).x()+snakeNodeWidth*2 > 850){
         gameStart=false;state=pause;
-               QMessageBox::information(this, QString::fromLocal8Bit("GG"),QString::fromLocal8Bit("STRIKE!!!"));
+        set_state("end");
     }else{
         snake.insert(0,QRectF(snake.at(0).topRight(),snake.at(0).bottomRight()+QPointF(snakeNodeWidth,0)));
     }
     if(snakeStrike()){
         gameStart=false;state=pause;;
-         QMessageBox::information(this, QString::fromLocal8Bit("GG"),QString::fromLocal8Bit("STRIKE!!!"));
+        set_state("end");
     }
 }
 //删除结尾数据
@@ -383,7 +544,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 //        break;
     case Qt::Key_Space:
         if(!gameStart){
-          qDebug()<<"1";
+          set_state("running");
             if(state==not_begin){
 
                 //生成奖励
@@ -395,6 +556,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             timer->start(100);
             gameStart = true;
         }else if(gameStart ){
+            set_state("pause");
             t_last=t_now;
             t_now=0;
             state=pause;
@@ -436,6 +598,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionBEGIN_triggered()
 {
+set_state("running");
 if(state!=not_begin){return;}
 setreward();
 ttime.restart();
@@ -446,6 +609,7 @@ gameStart = true;
 
 void MainWindow::on_actionPAUSE_triggered()
 {
+    set_state("pause");
     if(state!=runing)return;
     t_last=t_now;
     t_now=0;
@@ -701,3 +865,4 @@ void MainWindow::on_pushButton_8_clicked()
 
 
 }
+

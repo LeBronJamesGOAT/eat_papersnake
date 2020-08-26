@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include<QString>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -22,7 +23,7 @@ protected:
 
 
 private:
-
+    void set_state(QString str);
     void addTopRectF();
     void addDownRectF();
     void addLeftRectF();
@@ -67,6 +68,8 @@ private slots:
 
     void on_pushButton_8_clicked();
 
+    void on_beginButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QList<QRectF> snake;//贪吃蛇本体
@@ -91,5 +94,15 @@ private:
     bool gameOver = true;
     bool gameStart = false;
     QRectF reward;//奖励节点
+
+    QToolBar *toolBar;
+    QAction *beginAction ;
+    QAction *pauseAction ;
+    QAction *continueAction ;
+    QAction *restartAction ;
+    QAction *quitAction ;
+    QAction *saveAction ;
+    QAction *loadAction;
+
 };
 #endif // MAINWINDOW_H
