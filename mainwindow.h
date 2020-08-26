@@ -18,20 +18,55 @@ public:
 protected:
     void paintEvent(QPaintEvent *);
     void mousePressEvent (QMouseEvent * );
-//    void keyPressEvent(QKeyEvent *);
+    void keyPressEvent(QKeyEvent *);
+
 
 private:
+
     void addTopRectF();
     void addDownRectF();
     void addLeftRectF();
     void addRightRectF();
     void deleteLastRectF();
     bool snakeStrike();
+    int getRandom();
+    void setreward();
     enum Move{Left,Right,Up,Down};
     enum status{not_begin,runing,pause};
 protected slots:
-//    void timeOut();
+    void timeOut();
 //    void rewardTimeOut();
+private slots:
+    void on_actionBEGIN_triggered();
+
+    void on_actionPAUSE_triggered();
+
+    void on_actionCONTINUE_triggered();
+
+    void on_actionRESTART_2_triggered();
+
+    void on_actionQUIT_2_triggered();
+
+    void on_actionSAVE_triggered();
+
+    void on_actionLOAD_triggered();
+
+    void on_pushButton_clicked();
+
+    void on_pushButton_2_clicked();
+
+    void on_pushButton_4_clicked();
+
+    void on_pushButton_3_clicked();
+
+    void on_pushButton_5_clicked();
+
+    void on_pushButton_6_clicked();
+
+    void on_pushButton_7_clicked();
+
+    void on_pushButton_8_clicked();
+
 private:
     Ui::MainWindow *ui;
     QList<QRectF> snake;//贪吃蛇本体
@@ -40,13 +75,21 @@ private:
     int snakeNodeHeight = 20;
     int barrierNodeWidth = 20;
     int barrierNodeHeight = 20;
-    int steps=0;
-//    QTimer *timer;
+    int steps=-1;
+    int points=0;
+    double t_last=0;
+    double t_now=0;
+    int to_grow=0;
+    int speed=500;
+    QTimer *timer;
+
 //    QTimer *rewardTimer;
 //    int time = 100;
-    int moveFlage = Up;
-    bool gameOver = false;
+    int need_move=0;
+    int state=not_begin;
+    int dir = Up;
+    bool gameOver = true;
     bool gameStart = false;
-    QList<QRectF> rewardNode;//奖励节点
+    QRectF reward;//奖励节点
 };
 #endif // MAINWINDOW_H
