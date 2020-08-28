@@ -36,6 +36,8 @@ private:
     enum status{not_begin,runing,pause};
 protected slots:
     void timeOut();
+    void gg();
+//    void forward();
 //    void rewardTimeOut();
 private slots:
     void on_actionBEGIN_triggered();
@@ -68,30 +70,30 @@ private slots:
 
     void on_pushButton_8_clicked();
 
-    void on_beginButton_clicked();
+//    void on_beginButton_clicked();
 
 private:
     Ui::MainWindow *ui;
     QList<QRectF> snake;//贪吃蛇本体
     QList<QRectF> barrier;
-    int snakeNodeWidth = 20;
-    int snakeNodeHeight = 20;
-    int barrierNodeWidth = 20;
-    int barrierNodeHeight = 20;
-    int steps=-1;
+    const int snakeNodeWidth = 20;
+    const int snakeNodeHeight = 20;
+    const int barrierNodeWidth = 20;
+    const int barrierNodeHeight = 20;
+    int steps=-0;
     int points=0;
-    double t_last=0;
-    double t_now=0;
+//    double t_last=0;
+//    double t_now=0;
     int to_grow=0;
     int speed=500;
     QTimer *timer;
 
 //    QTimer *rewardTimer;
 //    int time = 100;
-    int need_move=0;
+//    int need_move=0;
     int state=not_begin;
     int dir = Up;
-    bool gameOver = true;
+//    bool gameOver = true;
     bool gameStart = false;
     QRectF reward;//奖励节点
 
