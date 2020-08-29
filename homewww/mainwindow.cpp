@@ -32,19 +32,14 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->setWindowTitle("eat_papersnake");
+    this->setWindowIcon(QIcon("face.png"));
+    this->setWindowTitle("Eat_Papersnake");
 
-//    setFocusPolicy(Qt::StrongFocus);
+
     QFont font ( "Microsoft YaHei", 20, 75);
     ui->label_2->setFont(font);ui->label_3->setFont(font);
     snake.append(QRectF(210,510,snakeNodeWidth,snakeNodeHeight));
     addTopRectF();
-//    rewardNode.append(QRectF(110,110,snakeNodeWidth,snakeNodeWidth));
-    //rewardTimer->start(time*30);
-
-
-//    QToolBar *toolBar = addToolBar("ToolBar");
-//    toolBar->addAction("pNew""");
 
 
     toolBar = new QToolBar(this);
@@ -83,11 +78,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(saveAction,SIGNAL(triggered()),this,SLOT(on_actionSAVE_triggered()));
     connect(loadAction,SIGNAL(triggered()),this,SLOT(on_actionLOAD_triggered()));
 
-set_state("not_begin");
+    set_state("not_begin");
 
     timer = new QTimer;
-
-   connect(timer, SIGNAL(timeout()),this,SLOT(timeOut()));
+    connect(timer, SIGNAL(timeout()),this,SLOT(timeOut()));
 
 }
 
@@ -212,8 +206,7 @@ void MainWindow::set_state(QString str){
 
     }
     if(str=="end"){
-
-
+        state=end;
 
         ui->actionPAUSE->setEnabled(false);
         ui->actionBEGIN->setEnabled(false);
@@ -253,7 +246,7 @@ void MainWindow::set_state(QString str){
 }
 
 void MainWindow::setreward()
-{   qDebug()<<"1";
+{
     int a=getRandom(),b=getRandom();
     if(snake.length()+barrier.length()==1600){
         set_state("end");
@@ -278,22 +271,16 @@ void MainWindow::setreward()
 
 
     reward=QRectF(a,b,snakeNodeWidth,snakeNodeWidth);
+    update();
 }
 
 
 
 void MainWindow::timeOut()
 {
-//    for(int i=0; i<rewardNode.length(); i++){
-//        if(rewardNode.at(i).contains(snake.at(0).topLeft()+QPointF(snakeNodeWidth/2,snakeNodeHeight/2))){
-//            flage++;//正常奖励
-//            rewardNode.removeAt(i);
-//            break;
-//        }
-//    }
+
     if((gameStart==true&&state==runing)){
         Sleep(1000/speed);
-//        if(snake.at(0)==reward){points++;to_grow+=3;setreward();}
         if(to_grow==0){
             switch (dir) {
             case Up:
@@ -313,8 +300,6 @@ void MainWindow::timeOut()
             }
              if(gameStart==true&&state==runing){
         deleteLastRectF();}
-
-
         update();
 
         }
@@ -375,79 +360,62 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
 
     QPainter painter(this);
-//    QPen pen;
     QBrush brush;
+    QPen pen;
+    pen.setColor(QColor(240,240,240));
+    painter.setPen(pen);
 
     //反锯齿
     painter.setRenderHint(QPainter::Antialiasing);
 
-//    pen.setColor(Qt::black);
-    brush.setColor(Qt::black);
-
     brush.setStyle(Qt::SolidPattern);
-//    painter.setPen(pen);
-    painter.setBrush(brush);
-
-
-    brush.setColor(Qt::gray);
+    brush.setColor(Qt::black);
     painter.setBrush(brush);
     painter.drawRect(QRectF(30,30,840,840));
 
-    brush.setColor(Qt::black);
+    brush.setColor(QColor(240,240,240));
     painter.setBrush(brush);
-//    for(int i=0;i<40;++i){
-//        for(int j=0;j<40;++j){
-//            painter.drawRect(QRectF(50+i*20,50+j*20,20,20));
-//        }
-//    }
     painter.drawRect(QRectF(50,50,800,800));
-    brush.setColor(Qt::gray);
+    brush.setColor(Qt::black);
     painter.setBrush(brush);
 
     for(int i=0; i<barrier.length(); i++){
         painter.drawRect(barrier.at(i));
     }
+
     brush.setColor(Qt::red);
     painter.setBrush(brush);
     painter.drawEllipse(reward);
 
     brush.setColor(Qt::green);
     painter.setBrush(brush);
-    for(int i=0; i<snake.length(); i++){
-        painter.drawRect(snake.at(i));
+    for(int i=1; i<snake.length(); i++){
+        painter.drawEllipse(snake.at(i));
     }
 
     QPixmap image1;
     image1.load("face.png");
     painter.drawPixmap(snake.at(0).x(),snake.at(0).y(),snake.at(0).width(),snake.at(0).height(),image1);
-//    brush.setColor(Qt::blue);
-//    painter.setBrush(brush);
-//    painter.drawEllipse(snake.at(0));
-
-
-
     //QWidget::paintEvent(event);
 
 }
 
 void MainWindow::gg(){
-    gameStart=false;state=pause;;
+    gameStart=false;
     set_state("end");
 }
 
-void MainWindow::addTopRectF()
-{   steps++;
-
+void MainWindow::addTopRectF(){
+    steps++;
     if(snake.at(0).y()-snakeNodeHeight < 50){
         gg();
 
     }else{
         snake.insert(0,QRectF(snake.at(0).topLeft()+QPointF(0,-snakeNodeHeight),snake.at(0).topRight()));
     }
-
     if(snakeStrike()){
-        gameStart=false;state=pause;;
-        set_state("end");
+        snake.removeAt(0);
+        gg();
     }
     if(snake.at(0)==reward){points++;to_grow+=3;setreward();}
 }
@@ -456,14 +424,13 @@ void MainWindow::addDownRectF()
 {
     steps++;
     if(snake.at(0).y()+snakeNodeHeight*2 > 850){
-        gameStart=false;state=pause;
-        set_state("end");
+        gg();
     }else{
         snake.insert(0,QRectF(snake.at(0).bottomLeft(),snake.at(0).bottomRight()+QPointF(0,snakeNodeHeight)));
     }
     if(snakeStrike()){
-        gameStart=false;state=pause;;
-         set_state("end");
+        snake.removeAt(0);
+        gg();
     }
     if(snake.at(0)==reward){points++;to_grow+=3;setreward();}
 }
@@ -472,14 +439,13 @@ void MainWindow::addLeftRectF()
 {
     steps++;
     if(snake.at(0).x()-snakeNodeWidth < 50){
-        gameStart=false;state=pause;
-        set_state("end");
+        gg();
     }else{
         snake.insert(0,QRectF(snake.at(0).topLeft()+QPointF(-snakeNodeWidth,0),snake.at(0).bottomLeft()));
     }
     if(snakeStrike()){
-        gameStart=false;state=pause;;
-        set_state("end");
+        snake.removeAt(0);
+        gg();
     }
     if(snake.at(0)==reward){points++;to_grow+=3;setreward();}
 }
@@ -494,8 +460,8 @@ void MainWindow::addRightRectF()
         snake.insert(0,QRectF(snake.at(0).topRight(),snake.at(0).bottomRight()+QPointF(snakeNodeWidth,0)));
     }
     if(snakeStrike()){
-        gameStart=false;state=pause;;
-        set_state("end");
+        snake.removeAt(0);
+        gg();
     }
     if(snake.at(0)==reward){points++;to_grow+=3;setreward();}
 }
@@ -520,48 +486,45 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     switch(event->key()){
     case Qt::Key_Up:
         if(dir != Down){
+            if(state==not_begin){
+                state=runing;
+                gameStart = true;
+            }
             dir = Up;
         }
         break;
     case Qt::Key_Down:
         if(dir != Up){
+            if(state==not_begin){
+                state=runing;
+                gameStart = true;
+            }
             dir = Down;
         }
         break;
     case Qt::Key_Right:
         if(dir != Left){
+            if(state==not_begin){
+                state=runing;
+                gameStart = true;
+            }
             dir = Right;
         }
         break;
     case Qt::Key_Left:
         if(dir != Right){
+            if(state==not_begin){
+                state=runing;
+                gameStart = true;
+            }
             dir = Left;
         }
         break;
-//    case Qt::Key_Enter:
-//    case Qt::Key_Return:
-//        if(gameOver){
-//            snake.clear();
-//            rewardNode.clear();
-//            moveFlage = Up;
-//            snake.append(QRectF(200,500,snakeNodeWidth,snakeNodeHeight));
-//            addTopRectF();
-//            addTopRectF();
-//            //首先生成一个奖励节点
-//            rewardNode.append(QRectF(100,100,snakeNodeWidth,snakeNodeWidth));
-//            timer->start(time);
-//            rewardTimer->start(time*30);
-//            gameOver = false;
-//        }
-//        break;
     case Qt::Key_Space:
         if(!gameStart){
 
             if(state==not_begin){
-
-                //生成奖励
                 setreward();
-
             }
             ttime.restart();
             timer->start(100);
@@ -571,12 +534,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
                 on_actionCONTINUE_triggered();
             }
             else{
-    //            t_last=t_now;
-    //            t_now=0;
-//                timer->stop();
                 on_actionPAUSE_triggered();
             }
-
         }
         break;
     default:
@@ -612,8 +571,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionBEGIN_triggered()
 {
-set_state("running");
 setreward();
+set_state("running");
+state=not_begin;
+gameStart = false;
 ttime.restart();
 timer->start(100);
 }
@@ -621,12 +582,6 @@ timer->start(100);
 void MainWindow::on_actionPAUSE_triggered()
 {
     set_state("pause");
-//    t_last=t_now;
-//    t_now=0;
-
-//    timer->stop();
-//    state=pause;
-//    gameStart = false;
 }
 
 void MainWindow::on_actionCONTINUE_triggered()
@@ -639,27 +594,11 @@ void MainWindow::on_actionCONTINUE_triggered()
 void MainWindow::on_actionRESTART_2_triggered()
 {
 
-//    state=not_begin;
-//    dir=Up;
-//    steps=0;
-//    points=0;
-//    t_last=0;
-//    t_now=0;
-//    to_grow=0;
-//    speed=500;
-//    need_move=0;
-//    gameOver = true;
-//    gameStart = false;
     set_state("not_begin");
     foreach(auto item,snake)
     {
         snake.removeOne(item);
     }
-//    foreach(auto item,barrier)
-//    {
-//        barrier.removeOne(item);
-//        qDebug()<<"qlist.size()="<<barrier.size();
-//    }
     snake.append(QRectF(210,510,snakeNodeWidth,snakeNodeHeight));
     addTopRectF();
     on_actionBEGIN_triggered();
@@ -686,8 +625,6 @@ void MainWindow::on_actionSAVE_triggered()
 
             QMessageBox::information(this, QString::fromLocal8Bit("Warning"),QString::fromLocal8Bit("File open error"));
         return;
-        } else {
-            qDebug() <<"File open!";
         }
     // 使用QJsonObject对象插入键值对。
         QJsonObject jsonObject;
@@ -734,37 +671,8 @@ void MainWindow::on_actionSAVE_triggered()
 
 void MainWindow::on_actionLOAD_triggered()
 
-{
+{   set_state("pause");
     QString text = QFileDialog::getOpenFileName(NULL,"load",".","*.json");
-//    bool ok;
-//    QString text = QInputDialog::getText(this, tr("file"),tr("enter your file here"), QLineEdit::Normal,0, &ok);
-    /*QTextCodec *codec = QTextCodec::codecForName("utf-8");
-    QTextCodec::setCodecForLocale(codec);
-    QFile file(QDir::currentPath()+"0.json");
-        if (file.open(QIODevice::ReadOnly))
-        {
-            QByteArray Data = file.readAll();
-            QJsonDocument jsonDoc(QJsonDocument::fromJson(Data));
-            if (jsonDoc.isObject()){
-                QJsonArray arr = obj["contents"].toArray();
-                if (!arr.isEmpty() && arr[0].isObject())
-                {
-                    for (int j = 0; j < arr.size(); j++)
-                    {
-                        QJsonObject itemObj = arr[j].toObject();
-                        QString value1 = codec->toUnicode(itemObj["Key1"].toString().toLocal8Bit());
-                        QString value2 = codec->toUnicode(itemObj["Key2"].toString().toLocal8Bit());
-                        if (!value1.isEmpty() && !value2.isEmpty())
-                        {
-                            //对数据value1和value2进行操作
-                        }
-                    }
-                }
-            }
-        }
-        file.close();
-    qDebug()<<"save";
-    */
 //    QFile loadFile(QDir::currentPath()+"/2.json");
     QFile loadFile(text);
         if(!loadFile.open(QIODevice::ReadOnly))
@@ -779,21 +687,12 @@ void MainWindow::on_actionLOAD_triggered()
         QJsonDocument jsonDoc(QJsonDocument::fromJson(allData, &json_error));
         if(json_error.error != QJsonParseError::NoError)
         {
-            qDebug() << "json error!";
-            return;
+            QMessageBox::information(this, QString::fromLocal8Bit("Warning"),QString::fromLocal8Bit("Json error"));
+
         }
         QJsonArray arr=jsonDoc.array();
+        QJsonObject rootObj = arr[0].toObject();
 
-       QJsonObject rootObj = arr[0].toObject();
-
-//        //输出所有key，这一步是非必须的，放最后的话，你可能读不到任何key
-//        QStringList keys = rootObj.keys();
-//        for(int i = 0; i < keys.size(); i++)
-//        {
-//            qDebug() << "key" << i << " is:" << keys.at(i);
-//        }
-
-//        //因为是预先定义好的JSON数据格式，所以这里可以这样读取
 
          dir=rootObj["dir"].toInt();
 //         gameOver=rootObj["gameOver"].toInt();

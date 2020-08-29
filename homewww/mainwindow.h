@@ -33,7 +33,7 @@ private:
     int getRandom();
     void setreward();
     enum Move{Left,Right,Up,Down};
-    enum status{not_begin,runing,pause};
+    enum status{not_begin,runing,pause,end};
 protected slots:
     void timeOut();
     void gg();
