@@ -594,14 +594,16 @@ void MainWindow::on_actionCONTINUE_triggered()
 void MainWindow::on_actionRESTART_2_triggered()
 {
 
-    set_state("not_begin");
+
     foreach(auto item,snake)
     {
         snake.removeOne(item);
     }
     snake.append(QRectF(210,510,snakeNodeWidth,snakeNodeHeight));
     addTopRectF();
-    on_actionBEGIN_triggered();
+    update();
+    set_state("not_begin");
+//    on_actionBEGIN_triggered();
 }
 
 void MainWindow::on_actionQUIT_2_triggered()
